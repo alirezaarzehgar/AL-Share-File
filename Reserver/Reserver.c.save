@@ -31,10 +31,11 @@ int main(int argc, char** argv)
 	GtkWidget* ent = gtk_entry_new();
         GtkWidget* Ent = gtk_entry_new();
 
-	GtkWidget* l[3];
+	GtkWidget* l[4];
 	l[0] = gtk_label_new("port");
         l[1] = gtk_label_new("IP");
         l[2] = gtk_label_new("name");
+        l[3] = gtk_label_new("permision");
 
 	// desine
 	gtk_widget_set_usize(GTK_WIDGET(win), 220, 240);
@@ -45,9 +46,6 @@ int main(int argc, char** argv)
         gtk_widget_set_usize(GTK_WIDGET(spi), 130, 30);
         gtk_widget_set_usize(GTK_WIDGET(ent), 130, 30);
         gtk_widget_set_usize(GTK_WIDGET(Ent), 130, 30);
-
-	gtk_entry_set_text(GTK_ENTRY(ent), "198.162.*.*");
-	gtk_entry_set_text(GTK_ENTRY(Ent), "File.txt");
 
 	//color
 	GdkColor back;

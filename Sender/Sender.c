@@ -7,12 +7,13 @@
 #include <string.h>
 #include <arpa/inet.h>
 
-int port = 8080;
+int port;
 int new_s;
 struct sockaddr_in sa;
 
 int Send(GtkWidget* w, GtkFileSelection *fs);
 int Send_filew();
+void Port_create(GtkWidget* w, GtkSpinButton* s);
 
 int main(int argc, char** argv)
 {
@@ -21,12 +22,14 @@ int main(int argc, char** argv)
 	GtkWidget* win    = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	GtkWidget* select_send   = gtk_button_new_with_label("Send file");
         GtkWidget* fix    = gtk_fixed_new();
+        GtkWidget* spi    = gtk_spin_button_new(((GtkAdjustment*) gtk_adjustment_new (8080, 0, 99999, 1, 0, 0)) , 0, 0);
 
 	// desine
 	gtk_widget_set_usize(GTK_WIDGET(win), 200, 200);
 	gtk_window_set_position(GTK_WINDOW(win), GTK_WIN_POS_CENTER);
 	gtk_widget_set_usize(GTK_WIDGET(select_send), 100, 30);
-	gtk_window_set_title(GTK_WINDOW(win), argv[1]);
+        gtk_widget_set_usize(GTK_WIDGET(spi), 100, 30);
+	gtk_window_set_title(GTK_WINDOW(win), "Sender");
 
 	//color
 	GdkColor back;
@@ -39,9 +42,11 @@ int main(int argc, char** argv)
 	gtk_widget_modify_bg(GTK_WIDGET(win), GTK_STATE_NORMAL, &back);
 	// fixed puts
 	gtk_fixed_put(GTK_FIXED(fix), select_send, 50, 50);
+	gtk_fixed_put(GTK_FIXED(fix), spi, 50, 120);
 
 	// signal
 	g_signal_connect(win, "delete-event", G_CALLBACK(gtk_main_quit), NULL);
+        g_signal_connect(select_send, "clicked", G_CALLBACK(Port_create), (GtkSpinButton*)spi);
 	g_signal_connect(select_send, "clicked", G_CALLBACK(Send_filew), NULL);
 
 	// show
@@ -54,17 +59,34 @@ int main(int argc, char** argv)
 int Send(GtkWidget* w, GtkFileSelection *fs)
 {
         int server;
-        if((server = socket(AF_INET, SOCK_STREAM, 0)) == 0) printf("error for creat socket!\n");
+        if((server = socket(AF_INET, SOCK_STREAM, 0)) == 0)
+        {
+        	printf("error for creat socket!\n");
+        	return -1;
+	}
 
         sa.sin_family = AF_INET;
         sa.sin_addr.s_addr = INADDR_ANY;
         sa.sin_port = htons(port);
 
-        if(bind(server, (struct sockaddr *)&sa, sizeof(sa)) < 0) printf("port not found!\n");
-        if(listen(server, 3) < 0) printf("error for listenning!\n");
+        if(bind(server, (struct sockaddr *)&sa, sizeof(sa)) < 0)
+        {
+        	printf("port not found!\n");
+        	return -1;
+	}
+
+        if(listen(server, 3) < 0)
+        {
+        	printf("error for listenning!\n");
+        	return -1;
+	}
 
         int size = sizeof(sa);
-        if((new_s = accept(server, (struct sockaddr *)&sa, (socklen_t *)&size)) < 0) printf("error for accept!\n");
+        if((new_s = accept(server, (struct sockaddr *)&sa, (socklen_t *)&size)) < 0)
+        {
+        	printf("error for accept!\n");
+        	return -1;
+	}
 
 	char str[1024];
 	char* file_media = (char*) malloc (sizeof(char*)*100000000);
@@ -118,3 +140,7 @@ int Send_filew()
         return 0;
 }
 
+void Port_create(GtkWidget* w, GtkSpinButton* s)
+{
+        port = gtk_spin_button_get_value_as_int(s);
+}
