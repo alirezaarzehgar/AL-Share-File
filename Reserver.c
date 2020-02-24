@@ -77,11 +77,10 @@ int Reserv()
         serv_addr.sin_family = AF_INET;
         serv_addr.sin_port = htons(port);
         serv_addr.sin_addr.s_addr = inet_addr(ip);
-	g_print(ip);
 
         if(connect(sockfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr))<0)
         {
-                gtk_label_set_text(GTK_LABEL(lab), "Error : Connect Failed");
+                gtk_label_set_text(GTK_LABEL(lab), "Error : IP not found");
                 return 1;
         }
 
@@ -122,7 +121,7 @@ void Ip_create(GtkWidget* w, GtkEntry* e)
 
 	for(int i = 0; i < strlen(tmp); i++)
 	{
-		ip[i] = tmp[i];
+		if(isdigit(tmp[i]) || tmp[i] == '.') ip[i] = tmp[i];
 	}
 }
 
