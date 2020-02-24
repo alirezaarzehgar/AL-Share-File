@@ -116,7 +116,10 @@ void Port_create(GtkWidget* w, GtkSpinButton* s)
 
 void Ip_create(GtkWidget* w, GtkEntry* e)
 {
-	sprintf(ip, "%s", gtk_entry_get_text(GTK_ENTRY(e)));
+	char tmp[30];
+	sprintf(tmp, "%s", gtk_entry_get_text(GTK_ENTRY(e)));
+
+	for(int i = 0; i < strlen(tmp); i++) if(isdigit(tmp[i] || tmp[i] == '.')) ip[i] = tmp[i];
 }
 
 void name_create(GtkWidget* w, GtkEntry* e)
