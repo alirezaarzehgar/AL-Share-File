@@ -77,6 +77,7 @@ int Reserv()
         serv_addr.sin_family = AF_INET;
         serv_addr.sin_port = htons(port);
         serv_addr.sin_addr.s_addr = inet_addr(ip);
+	g_print(ip);
 
         if(connect(sockfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr))<0)
         {
@@ -119,7 +120,10 @@ void Ip_create(GtkWidget* w, GtkEntry* e)
 	char tmp[30];
 	sprintf(tmp, "%s", gtk_entry_get_text(GTK_ENTRY(e)));
 
-	for(int i = 0; i < strlen(tmp); i++) if(isdigit(tmp[i] || tmp[i] == '.')) ip[i] = tmp[i];
+	for(int i = 0; i < strlen(tmp); i++)
+	{
+		ip[i] = tmp[i];
+	}
 }
 
 void name_create(GtkWidget* w, GtkEntry* e)
