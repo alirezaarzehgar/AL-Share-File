@@ -1,5 +1,7 @@
 #include "header.h"
 
+int FileIp = 0;
+
 int Reserver()
 {
 
@@ -80,7 +82,8 @@ int Reserv()
 
         if(connect(sockfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr))<0)
         {
-                gtk_label_set_text(GTK_LABEL(lab), "Error : IP not found");
+                gtk_label_set_text(GTK_LABEL(lab), "IP not found, use file ip");
+		FileIp = 1;
                 return 1;
         }
 
@@ -99,7 +102,7 @@ int Reserv()
 	close(sockfd);
 
         char Mess[1024];
-        sprintf(Mess, "%s reserving from %d ip",fname, ip);
+        sprintf(Mess, "%s reserving from %s ip",fname, ip);
 
         // message
         GtkWidget* box = gtk_message_dialog_new(NULL, GTK_DIALOG_MODAL, GTK_MESSAGE_INFO, GTK_BUTTONS_CANCEL, "Message");
@@ -116,12 +119,21 @@ void Port_create(GtkWidget* w, GtkSpinButton* s)
 
 void Ip_create(GtkWidget* w, GtkEntry* e)
 {
-	char tmp[30];
-	sprintf(tmp, "%s", gtk_entry_get_text(GTK_ENTRY(e)));
-
-	for(int i = 0; i < strlen(tmp); i++)
+	if(FileIp == 1)
 	{
-		if(isdigit(tmp[i]) || tmp[i] == '.') ip[i] = tmp[i];
+		FILE* f = fopen("FileIp", "w");
+		fscanf(f, "%s", ip);
+		fclose(f);
+	}
+	else
+	{
+		char tmp[30];
+		sprintf(tmp, "%s", gtk_entry_get_text(GTK_ENTRY(e)));
+
+		for(int i = 0; i < strlen(tmp); i++)
+		{
+			if(isdigit(tmp[i]) || tmp[i] == '.') ip[i] = tmp[i];
+		}
 	}
 }
 
